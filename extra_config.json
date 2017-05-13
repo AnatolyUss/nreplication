@@ -1,0 +1,51 @@
+{
+    "README" : [
+        "This JSON document represents additional configuration options.",
+        "These options (currently only renaming) will be applied during replication if, and only if",
+        "the 'enable_extra_config' attribute from 'config.json' is set true.",
+        "By default the 'enable_extra_config' is false, hence the options",
+        "described here will not take effect.",
+        "Following lines are an example of expected renaming format.",
+        "Feel free to modify them."
+    ],
+
+    "tables" : [
+        {
+            "name" : {
+                "original" : "admins",
+                "new" : "renamed_admins"
+            },
+
+            "columns" : [
+                {
+                    "original" : "id",
+                    "new" : "renamed_id"
+                },
+
+                {
+                    "original" : "username",
+                    "new" : "renamed_username"
+                },
+
+                {
+                    "original" : "password",
+                    "new" : "renamed_password"
+                }
+            ]
+        },
+
+        {
+            "name" : {
+                "original" : "logs",
+                "new" : "renamed_logs"
+            },
+
+            "columns" : [
+                {
+                    "original" : "id",
+                    "new" : "renamed_id"
+                }
+            ]
+        }
+    ]
+}

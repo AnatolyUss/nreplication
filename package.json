@@ -1,0 +1,19 @@
+{
+  "name": "nreplication",
+  "version": "0.0.1",
+  "description": "MySQL to PostgreSQL replication app",
+  "author": "Anatoly Khaytovich<anatolyuss@gmail.com>",
+  "license": "GPL-3.0",
+  "scripts": {
+      "start": "node src/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnatolyUss/nmig.git"
+  },
+  "dependencies": {
+    "mysql": "*",
+    "pg": "*",
+    "zongji": "*"
+  }
+}

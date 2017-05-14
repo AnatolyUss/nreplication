@@ -30,18 +30,14 @@ const fs = require('fs');
  * @param {Nreplication} nreplication
  * @param {String}       log
  * @param {String}       tableLogPath
- * @param {Boolean}      isErrorLog
  * @param {Function}     callback
  *
  * @returns {undefined}
  */
-module.exports = (nreplication, log, tableLogPath, isErrorLog, callback) => {
+module.exports = (nreplication, log, tableLogPath, callback) => {
     const buffer = Buffer.from(log + '\n\n', nreplication._encoding);
-
-    if (!isErrorLog) {
-        console.log(log);
-    }
-
+    console.log(log);
+    
     fs.open(nreplication._allLogsPath, 'a', nreplication._0777, (error, fd) => {
         if (error) {
             return callback();

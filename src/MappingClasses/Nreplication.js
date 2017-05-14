@@ -56,9 +56,9 @@ module.exports = function Nreplication(config) {
     this._dicTablesToReplicate = Object.create(null);
     this._schema               = this._config.schema === undefined || this._config.schema === '' ? 'public' : this._config.schema;
     this._zongji               = new ZongJi({
-        host     : _sourceConDetails.host,
-        user     : _sourceConDetails.user,
-        password : _sourceConDetails.password
+        host     : this._sourceConDetails.host,
+        user     : this._sourceConDetails.user,
+        password : this._sourceConDetails.password
     });
 
     this._maxPoolSizeSource    = this._config.max_pool_size_source !== undefined && isIntNumeric(this._config.max_pool_size_source)

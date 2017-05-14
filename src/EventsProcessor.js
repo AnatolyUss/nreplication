@@ -20,7 +20,13 @@
  */
 'use strict';
 
-const boot          = require('./BootProcessor');
-const processEvents = require('./EventsProcessor');
-
-boot().then(processEvents).catch(error => console.log(error));
+/**
+ * Process MySQL events.
+ *
+ * @param {Nreplication} nreplication
+ *
+ * @returns {undefined}
+ */
+module.exports = nreplication => {
+    console.log(nreplication);//////////
+};

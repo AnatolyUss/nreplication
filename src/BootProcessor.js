@@ -142,8 +142,8 @@ const ping = nreplication => {
                                         } else {
                                             // The ping performed successfully.
                                             const greeting = ''
-                                                + '\n\n\tNREPLICATION - the database replication tool'
-                                                + '\n\tCopyright (C) 2017 - present, Anatoly Khaytovich <anatolyuss@gmail.com>\n\n'
+                                                + '\n\n\tNREPLICATION - the database replication tool.'
+                                                + '\n\tCopyright (C) 2017 - present, Anatoly Khaytovich <anatolyuss@gmail.com>.\n\n'
                                                 + '\tConfiguration has been just loaded.'
                                                 + '\n\tProceed? [Y/n]';
 
@@ -159,7 +159,7 @@ const ping = nreplication => {
                                                         }
 
                                                         if (stdin.indexOf('Y') !== -1) {
-                                                            resolve();
+                                                            resolve(nreplication);
                                                         }
                                                     });
                                         }

@@ -37,8 +37,8 @@ module.exports = nreplication => {
     return new Promise(resolve => {
         const mysqlConnectionPromise = new Promise((mysqlResolve, mysqlReject) => {
             if (!nreplication._mysql) {
-                nreplication._sourceConString.connectionLimit = nreplication._maxPoolSizeSource;
-                const pool                                    = mysql.createPool(nreplication._sourceConString);
+                nreplication._sourceConDetails.connectionLimit = nreplication._maxPoolSizeSource;
+                const pool                                     = mysql.createPool(nreplication._sourceConDetails);
 
                 if (pool) {
                     nreplication._mysql = pool;
@@ -55,8 +55,8 @@ module.exports = nreplication => {
 
         const pgConnectionPromise = new Promise((pgResolve, pgReject) => {
             if (!nreplication._pg) {
-                nreplication._targetConString.max = nreplication._maxPoolSizeTarget;
-                const pool                        = new pg.Pool(nreplication._targetConString);
+                nreplication._targetConDetails.max = nreplication._maxPoolSizeTarget;
+                const pool                         = new pg.Pool(nreplication._targetConDetails);
 
                 if (pool) {
                     nreplication._pg = pool;

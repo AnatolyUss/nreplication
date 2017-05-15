@@ -99,7 +99,7 @@ const getPgSqlPool = nreplication => {
 module.exports = nreplication => {
     return new Promise(resolve => {
         Promise.all([getMySqlPool(nreplication), getPgSqlPool(nreplication)])
-            .then(() => resolve())
+            .then(() => resolve(nreplication))
             .catch(() => process.exit());
     });
 };

@@ -97,7 +97,111 @@ const initialize = config => {
 };
 
 /**
- * Check connection.
+ * Check connection with MySQL server.
+ *
+ * @param {Nreplication} nreplication
+ *
+ * @returns {Promise}
+ */
+const pingMySql = nreplication => {
+    return new Promise(resolve => {
+        nreplication._mysql.getConnection((error, connection) => {
+            if (error) {
+                // Cannot continue, since the connection to MySQL server is undefined.
+                log(nreplication, '\t--[BootProcessor::pingMySql] Cannot obtain MySQL connection.', undefined, () => process.exit());
+            } else {
+                connection.query('SELECT 1;', err => {
+                    connection.release();
+
+                    if (err) {
+                        log(
+                            nreplication,
+                            '\t--[BootProcessor::pingMySql] Unexpected error occurred when connected to MySQL.',
+                            undefined,
+                            () => process.exit()
+                        );
+                    } else {
+                        resolve();
+                    }
+                });
+            }
+        });
+    });
+};
+
+/**
+ * Check connection with PostgreSQL server.
+ *
+ * @param {Nreplication} nreplication
+ *
+ * @returns {Promise}
+ */
+const pingPgSql = nreplication => {
+    return new Promise(resolve => {
+        nreplication._pg.connect((pgError, client, done) => {
+            if (pgError) {
+                // Cannot continue, since the connection to PostgreSQL server is undefined.
+                log(
+                    nreplication, 
+                    '\t--[BootProcessor::pingPgSql] Cannot obtain PostgreSQL connection.', 
+                    undefined, 
+                    () => process.exit()
+                );
+            } else {
+                client.query('SELECT 1;', pgErr => {
+                    done();
+
+                    if (pgErr) {
+                        log(
+                            nreplication,
+                            '\t--[BootProcessor::pingPgSql] Unexpected error occurred when connected to PostgreSQL.',
+                            undefined,
+                            () => process.exit()
+                        );
+                    } else {
+                        resolve();
+                    }
+                });
+            }
+        });
+    });
+};
+
+/**
+ * Greet the user.
+ *
+ * @param {Nreplication} nreplication
+ *
+ * @returns {Promise}
+ */
+const greet = nreplication => {
+    return new Promise(resolve => {
+        const greeting = ''
+            + '\n\n\tNREPLICATION - the database replication tool.'
+            + '\n\tCopyright (C) 2017 - present, Anatoly Khaytovich <anatolyuss@gmail.com>.\n\n'
+            + '\tConfiguration has been just loaded.'
+            + '\n\tProceed? [Y/n]';
+
+        console.log(greeting);
+        process
+            .stdin
+            .resume()
+            .setEncoding(nreplication._encoding)
+            .on('data', stdin => {
+                if (stdin.indexOf('n') !== -1) {
+                    console.log('\tReplication aborted.\n');
+                    process.exit();
+                }
+
+                if (stdin.indexOf('Y') !== -1) {
+                    resolve();
+                }
+            });
+    });
+};
+
+/**
+ * Check connections.
  *
  * @param {Nreplication} nreplication
  *
@@ -106,70 +210,11 @@ const initialize = config => {
 const ping = nreplication => {
     return getPool(nreplication).then(() => {
         return new Promise(resolve => {
-            // Ping MySQL server.
-            nreplication._mysql.getConnection((error, connection) => {
-                if (error) {
-                    // Cannot continue, since the connection to MySQL server is undefined.
-                    log(nreplication, '\t--[BootProcessor::ping] Cannot obtain MySQL connection.', undefined, () => process.exit());
-                } else {
-                    connection.query('SELECT 1;', err => {
-                        connection.release();
-
-                        if (err) {
-                            log(
-                                nreplication,
-                                '\t--[BootProcessor::ping] Unexpected error occurred when connected to MySQL.',
-                                undefined,
-                                () => process.exit()
-                            );
-                        } else {
-                            // Ping PostgreSQL server.
-                            nreplication._pg.connect((pgError, client, done) => {
-                                if (pgError) {
-                                    // Cannot continue, since the connection to PostgreSQL server is undefined.
-                                    log(nreplication, '\t--[BootProcessor::ping] Cannot obtain PostgreSQL connection.', undefined, () => process.exit());
-                                } else {
-                                    client.query('SELECT 1;', pgErr => {
-                                        done();
-
-                                        if (pgErr) {
-                                            log(
-                                                nreplication,
-                                                '\t--[BootProcessor::ping] Unexpected error occurred when connected to PostgreSQL.',
-                                                undefined,
-                                                () => process.exit()
-                                            );
-                                        } else {
-                                            // The ping performed successfully.
-                                            const greeting = ''
-                                                + '\n\n\tNREPLICATION - the database replication tool.'
-                                                + '\n\tCopyright (C) 2017 - present, Anatoly Khaytovich <anatolyuss@gmail.com>.\n\n'
-                                                + '\tConfiguration has been just loaded.'
-                                                + '\n\tProceed? [Y/n]';
-
-                                                console.log(greeting);
-                                                process
-                                                    .stdin
-                                                    .resume()
-                                                    .setEncoding(nreplication._encoding)
-                                                    .on('data', stdin => {
-                                                        if (stdin.indexOf('n') !== -1) {
-                                                            console.log('\tReplication aborted.\n');
-                                                            process.exit();
-                                                        }
-
-                                                        if (stdin.indexOf('Y') !== -1) {
-                                                            resolve(nreplication);
-                                                        }
-                                                    });
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+            Promise.all([pingMySql(nreplication), pingPgSql(nreplication)])
+                .then(() => {
+                    return greet(nreplication);
+                })
+                .then(() => resolve(nreplication));
         });
     });
 };

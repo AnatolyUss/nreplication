@@ -25,6 +25,69 @@ const pg    = require('pg');
 const log   = require('./Logger');
 
 /**
+ * Ensure MySQL connections pool is available.
+ * If not, then create the pool.
+ *
+ * @param {Nreplication} nreplication
+ *
+ * @returns {Promise}
+ */
+const getMySqlPool = nreplication => {
+    return new Promise((mysqlResolve, mysqlReject) => {
+        if (!nreplication._mysql) {
+            nreplication._sourceConDetails.connectionLimit = nreplication._maxPoolSizeSource;
+            const pool                                     = mysql.createPool(nreplication._sourceConDetails);
+
+            if (pool) {
+                nreplication._mysql = pool;
+                mysqlResolve();
+            } else {
+                log(nreplication, '\t--[Pool::getMySqlPool] Cannot create MySQL connections pool...', undefined, () => {
+                    mysqlReject();
+                });
+            }
+        } else {
+            mysqlResolve();
+        }
+    });
+};
+
+/**
+ * Ensure PostgreSQL connections pool is available.
+ * If not, then create the pool.
+ *
+ * @param {Nreplication} nreplication
+ *
+ * @returns {Promise}
+ */
+const getPgSqlPool = nreplication => {
+    return new Promise((pgResolve, pgReject) => {
+        if (!nreplication._pg) {
+            nreplication._targetConDetails.max = nreplication._maxPoolSizeTarget;
+            const pool                         = new pg.Pool(nreplication._targetConDetails);
+
+            if (pool) {
+                nreplication._pg = pool;
+                nreplication._pg.on('error', error => {
+                    const message = '\t--[Pool::getPgSqlPool] Cannot create PostgreSQL connections pool...\n' + error.message + '\n' + error.stack;
+                    log(nreplication, '\t--[Pool::getPgSqlPool] Cannot create PostgreSQL connections pool...', undefined, () => {
+                        process.exit();
+                    });
+                });
+
+                pgResolve();
+            } else {
+                log(nreplication, '\t--[Pool::getPgSqlPool] Cannot create PostgreSQL connections pool...', undefined, () => {
+                    pgReject();
+                });
+            }
+        } else {
+            pgResolve();
+        }
+    });
+};
+
+/**
  * Check if both pools exist.
  * If not, than create pools.
  * Kill current process if can not create pools.
@@ -35,51 +98,7 @@ const log   = require('./Logger');
  */
 module.exports = nreplication => {
     return new Promise(resolve => {
-        const mysqlConnectionPromise = new Promise((mysqlResolve, mysqlReject) => {
-            if (!nreplication._mysql) {
-                nreplication._sourceConDetails.connectionLimit = nreplication._maxPoolSizeSource;
-                const pool                                     = mysql.createPool(nreplication._sourceConDetails);
-
-                if (pool) {
-                    nreplication._mysql = pool;
-                    mysqlResolve();
-                } else {
-                    log(nreplication, '\t--[Pool] Cannot create MySQL connections pool...', undefined, () => {
-                        mysqlReject();
-                    });
-                }
-            } else {
-                mysqlResolve();
-            }
-        });
-
-        const pgConnectionPromise = new Promise((pgResolve, pgReject) => {
-            if (!nreplication._pg) {
-                nreplication._targetConDetails.max = nreplication._maxPoolSizeTarget;
-                const pool                         = new pg.Pool(nreplication._targetConDetails);
-
-                if (pool) {
-                    nreplication._pg = pool;
-
-                    nreplication._pg.on('error', error => {
-                        const message = '\t--[Pool] Cannot create PostgreSQL connections pool...\n' + error.message + '\n' + error.stack;
-                        log(nreplication, '\t--[Pool] Cannot create PostgreSQL connections pool...', undefined, () => {
-                            process.exit();
-                        });
-                    });
-
-                    pgResolve();
-                } else {
-                    log(nreplication, '\t--[Pool] Cannot create PostgreSQL connections pool...', undefined, () => {
-                        pgReject();
-                    });
-                }
-            } else {
-                pgResolve();
-            }
-        });
-
-        Promise.all([mysqlConnectionPromise, pgConnectionPromise])
+        Promise.all([getMySqlPool(nreplication), getPgSqlPool(nreplication)])
             .then(() => resolve())
             .catch(() => process.exit());
     });

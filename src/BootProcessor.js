@@ -208,7 +208,7 @@ const greet = nreplication => {
  * @returns {Promise}
  */
 const ping = nreplication => {
-    return getPool(nreplication).then(() => {
+    return getPool(nreplication).then(nreplication => {
         return new Promise(resolve => {
             Promise.all([pingMySql(nreplication), pingPgSql(nreplication)])
                 .then(() => {

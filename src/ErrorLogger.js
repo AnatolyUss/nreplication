@@ -35,7 +35,7 @@ const log = require('./Logger');
  */
 module.exports = (nreplication, message, sql, callback) => {
     message      += '\n\n\tSQL: ' + (sql || '') + '\n\n';
-    const buffer  = getBuffer(message, nreplication._encoding);
+    const buffer  = Buffer.from(message, nreplication._encoding);
     log(nreplication, message, undefined, true, () => {
         fs.open(nreplication._errorLogsPath, 'a', nreplication._0777, (error, fd) => {
             if (error) {
@@ -43,9 +43,7 @@ module.exports = (nreplication, message, sql, callback) => {
             }
 
             fs.write(fd, buffer, 0, buffer.length, null, () => {
-                fs.close(fd, () => {
-                    return callback();
-                });
+                fs.close(fd, callback);
             });
         });
     });

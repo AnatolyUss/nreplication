@@ -42,9 +42,8 @@ const getMySqlPool = nreplication => {
                 nreplication._mysql = pool;
                 mysqlResolve();
             } else {
-                log(nreplication, '\t--[Pool::getMySqlPool] Cannot create MySQL connections pool...', undefined, () => {
-                    mysqlReject();
-                });
+                const message = '\t--[Pool::getMySqlPool] Cannot create MySQL connections pool...';
+                log(nreplication, message, undefined, mysqlReject);
             }
         } else {
             mysqlResolve();
@@ -69,17 +68,22 @@ const getPgSqlPool = nreplication => {
             if (pool) {
                 nreplication._pg = pool;
                 nreplication._pg.on('error', error => {
-                    const message = '\t--[Pool::getPgSqlPool] Cannot create PostgreSQL connections pool...\n' + error.message + '\n' + error.stack;
-                    log(nreplication, '\t--[Pool::getPgSqlPool] Cannot create PostgreSQL connections pool...', undefined, () => {
+                    const message = '\t--[Pool::getPgSqlPool] Cannot create PostgreSQL connections pool...\n'
+                        + error.message + '\n' + error.stack;
+
+                    log(nreplication, message, undefined, () => {
                         process.exit();
                     });
                 });
 
                 pgResolve();
             } else {
-                log(nreplication, '\t--[Pool::getPgSqlPool] Cannot create PostgreSQL connections pool...', undefined, () => {
-                    pgReject();
-                });
+                log(
+                    nreplication,
+                    '\t--[Pool::getPgSqlPool] Cannot create PostgreSQL connections pool...',
+                    undefined,
+                    pgReject
+                );
             }
         } else {
             pgResolve();

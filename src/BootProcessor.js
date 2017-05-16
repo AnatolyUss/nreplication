@@ -108,7 +108,12 @@ const pingMySql = nreplication => {
         nreplication._mysql.getConnection((error, connection) => {
             if (error) {
                 // Cannot continue, since the connection to MySQL server is undefined.
-                log(nreplication, '\t--[BootProcessor::pingMySql] Cannot obtain MySQL connection.', undefined, () => process.exit());
+                log(
+                    nreplication,
+                    '\t--[BootProcessor::pingMySql] Cannot obtain MySQL connection.',
+                    undefined,
+                    () => process.exit()
+                );
             } else {
                 connection.query('SELECT 1;', err => {
                     connection.release();

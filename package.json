@@ -5,15 +5,19 @@
   "author": "Anatoly Khaytovich<anatolyuss@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-      "start": "node src/main.js"
+      "prestart": "webpack",
+      "start": "node app.bundle.js"
   },
   "repository": {
-    "type": "git",
-    "url": "https://github.com/AnatolyUss/nmig.git"
+      "type": "git",
+      "url": "https://github.com/AnatolyUss/nmig.git"
   },
   "dependencies": {
-    "mysql": "*",
-    "pg": "*",
-    "zongji": "*"
+      "mysql": "*",
+      "pg": "*",
+      "zongji": "*"
+  },
+  "devDependencies": {
+      "webpack": "*"
   }
 }

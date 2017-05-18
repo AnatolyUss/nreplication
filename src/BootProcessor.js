@@ -37,14 +37,14 @@ const readConfig = () => {
 
         fs.readFile(strPathToConfig, (error, data) => {
             if (error) {
-                reject('\n\t--Cannot run replication\nCannot read configuration info from ' + strPathToConfig);
+                reject(`\n\t--Cannot run replication\nCannot read configuration info from ${strPathToConfig}`);
             } else {
                 try {
                     const config       = JSON.parse(data);
                     config.logsDirPath = path.join(__dirname, '..', 'logs_directory');
                     resolve(config);
                 } catch (err) {
-                    reject('\n\t--Cannot parse JSON from ' + strPathToConfig);
+                    reject(`\n\t--Cannot parse JSON from ${strPathToConfig}`);
                 }
             }
         });
@@ -70,13 +70,13 @@ const readExtraConfig = config => {
 
         fs.readFile(strPathToExtraConfig, (error, data) => {
             if (error) {
-                reject('\n\t--Cannot run replication\nCannot read configuration info from ' + strPathToExtraConfig);
+                reject(`\n\t--Cannot run replication\nCannot read configuration info from ${strPathToExtraConfig}`);
             } else {
                 try {
                     config.extraConfig = JSON.parse(data);
                     resolve(config);
                 } catch (err) {
-                    reject('\n\t--Cannot parse JSON from ' + strPathToExtraConfig);
+                    reject(`\n\t--Cannot parse JSON from ${strPathToExtraConfig}`);
                 }
             }
         });
@@ -183,8 +183,8 @@ const greet = nreplication => {
     return new Promise(resolve => {
         const greeting = ''
             + '\n\n\tNREPLICATION - the database replication tool.'
-            + '\n\tCopyright (C) 2017 - present, Anatoly Khaytovich <anatolyuss@gmail.com>.\n\n'
-            + '\tConfiguration has been just loaded.'
+            + '\n\tCopyright (C) 2017 - present, Anatoly Khaytovich <anatolyuss@gmail.com>.'
+            + '\n\tConfiguration has been just loaded.'
             + '\n\tProceed? [Y/n]';
 
         console.log(greeting);

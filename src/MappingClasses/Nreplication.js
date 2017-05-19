@@ -20,10 +20,10 @@
  */
 'use strict';
 
-import path from 'path';
-import ZongJi from 'zongji';
+const path   = require('path');
+const ZongJi = require('zongji');
 
-export default class Nreplication {
+module.exports = class Nreplication {
     /**
      * Constructor.
      *

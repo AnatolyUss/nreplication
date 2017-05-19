@@ -68,8 +68,8 @@ const getPgSqlPool = nreplication => {
             if (pool) {
                 nreplication._pg = pool;
                 nreplication._pg.on('error', error => {
-                    const message = '\t--[Pool::getPgSqlPool] Cannot create PostgreSQL connections pool...\n'
-                        + error.message + '\n' + error.stack;
+                    const message = `\t--[Pool::getPgSqlPool] Cannot create PostgreSQL connections pool...\n
+                                    ${error.message}\n ${error.stack}`;
 
                     log(nreplication, message, undefined, () => {
                         process.exit();

@@ -34,17 +34,20 @@ const log          = require('./Logger');
 const readConfig = () => {
     return new Promise((resolve, reject) => {
         const strPathToConfig = path.join(__dirname, '..', 'config.json');
-
         fs.readFile(strPathToConfig, (error, data) => {
             if (error) {
-                reject(`\n\t--Cannot run replication\nCannot read configuration info from ${strPathToConfig}`);
+                const msg = `\n\t--[BootProcessor::readConfig] Cannot run replication.
+                             \n\t--[BootProcessor::readConfig] Cannot read configuration info from ${strPathToConfig}
+                             \n\t--[BootProcessor::readConfig] ${error}`;
+
+                reject(msg);
             } else {
                 try {
                     const config       = JSON.parse(data);
                     config.logsDirPath = path.join(__dirname, '..', 'logs_directory');
                     resolve(config);
                 } catch (err) {
-                    reject(`\n\t--Cannot parse JSON from ${strPathToConfig}`);
+                    reject(`\n\t--[BootProcessor::readConfig] Cannot parse JSON from ${strPathToConfig}`);
                 }
             }
         });
@@ -67,16 +70,19 @@ const readExtraConfig = config => {
         }
 
         const strPathToExtraConfig = path.join(__dirname, '..', 'extra_config.json');
-
         fs.readFile(strPathToExtraConfig, (error, data) => {
             if (error) {
-                reject(`\n\t--Cannot run replication\nCannot read configuration info from ${strPathToExtraConfig}`);
+                const msg = `\n\t--[BootProcessor::readExtraConfig] Cannot run replication.
+                             \n\t--[BootProcessor::readExtraConfig] Cannot read configuration info from ${strPathToExtraConfig}
+                             \n\t--[BootProcessor::readExtraConfig] ${error}`;
+
+                reject(msg);
             } else {
                 try {
                     config.extraConfig = JSON.parse(data);
                     resolve(config);
                 } catch (err) {
-                    reject(`\n\t--Cannot parse JSON from ${strPathToExtraConfig}`);
+                    reject(`\n\t--[BootProcessor::readExtraConfig] Cannot parse JSON from ${strPathToExtraConfig}`);
                 }
             }
         });

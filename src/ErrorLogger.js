@@ -33,8 +33,8 @@ const log = require('./Logger');
  *
  * @returns {undefined}
  */
-module.exports = (nreplication, message, sql, callback) => {
-    message      += '\n\n\tSQL: ' + (sql || '') + '\n\n';
+module.exports = (nreplication, message, sql = '', callback) => {
+    message      += `\n\n\tSQL: ${sql} \n\n`;
     const buffer  = Buffer.from(message, nreplication._encoding);
     log(nreplication, message, undefined, true, () => {
         fs.open(nreplication._errorLogsPath, 'a', nreplication._0777, (error, fd) => {

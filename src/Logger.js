@@ -35,7 +35,7 @@ const fs = require('fs');
  * @returns {undefined}
  */
 module.exports = (nreplication, log, tableLogPath, callback) => {
-    const buffer = Buffer.from(log + '\n\n', nreplication._encoding);
+    const buffer = Buffer.from(`${log} \n\n`, nreplication._encoding);
     console.log(log);
     
     fs.open(nreplication._allLogsPath, 'a', nreplication._0777, (error, fd) => {

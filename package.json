@@ -5,8 +5,7 @@
   "author": "Anatoly Khaytovich<anatolyuss@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-      "prestart": "webpack",
-      "start": "node app.bundle.js"
+      "start": "node ./src/main.js"
   },
   "repository": {
       "type": "git",
@@ -16,8 +15,5 @@
       "mysql": "*",
       "pg": "*",
       "zongji": "*"
-  },
-  "devDependencies": {
-      "webpack": "*"
   }
 }
